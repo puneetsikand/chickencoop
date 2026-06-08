@@ -1,0 +1,25 @@
+[project]
+name = "chickencoop"
+version = "0.0.1"
+requires-python = ">=3.11"
+description = "RAG grounding layer for AI-assisted development on ShopFloorOS"
+dependencies = [
+    "sqlite-vec",
+    "sentence-transformers",
+    "fastapi",
+    "uvicorn",
+    "python-frontmatter",
+    "pyyaml",
+    "httpx",
+    "jinja2",
+]
+
+[project.scripts]
+chickencoop = "chickencoop.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/chickencoop"]
