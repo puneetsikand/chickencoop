@@ -47,7 +47,7 @@ Output is a single markdown file. Every field below is required.
 ```yaml
 ---
 id: <kebab-case-slug-matching-filename, 3-7 words, descriptive>
-type: <thesis | decision | concept | framing | scope>
+type: <thesis | decision | concept | scope>
 status: current
 created: <date from user message>
 sources:
@@ -59,6 +59,41 @@ supersedes:        # omit entirely if not replacing an existing nugget
 sotu_snapshot: false
 ---
 ```
+
+Type discriminators (pick exactly one; read each carefully — most failures are here):
+
+• `thesis` — a load-bearing architectural claim. Form: "X IS Y" (or "X IS NOT Y").
+  Asserts a structural property of the system that constrains future design. Any
+  reframe ("monitoring IS structural, not a citation"; "the channel IS the control
+  system"), diagnostic heuristic, or "before-you-author, ask X" rule is a thesis.
+  Default to `thesis` when the nugget makes a non-obvious assertion about how the
+  system *is* shaped.
+
+• `decision` — a chosen path among alternatives. Form: "we do X (not Y)" or
+  "X is the convention". The headline declares a rule the codebase follows so the
+  choice isn't relitigated. Database-is-SSOT, dual-UI paradigm, admin-batches-MFD-
+  saves-immediately are decisions. Use `decision` only when the headline reads as
+  a rule the team agreed to, not as an architectural claim about how things ARE.
+
+• `concept` — a definitional or vocabulary anchor. Form: "X means Y" or "X is
+  the pattern for Y". The nugget names a term, primitive, or pattern so other
+  nuggets can reference it. Audit-trail tables, traffic-light status, Zustand
+  selector pattern, anchors-as-typed-ontology are concepts. Use `concept` only
+  when the nugget primarily *defines* something rather than asserting a claim
+  about the system's shape or declaring a rule.
+
+• `scope` — a boundary statement about a feature, track, or component. Form:
+  "Y covers X (and not Z)" or "Y is deferred until X". The nugget declares what
+  is in / out / queued. Use `scope` only for explicit boundary or coverage
+  statements (change-impact-analyzer scope, chickencoop scope).
+
+Disambiguation rules:
+- A nugget that reframes how to think about something → `thesis`, never `decision`.
+- A nugget that defines a primitive or names a pattern → `concept`, never `thesis`.
+- A nugget that draws a feature's edge → `scope`, never `decision`.
+- When torn between `thesis` and `decision`: if removing the nugget would let the
+  team make a *different architectural choice*, it's a thesis. If removing it
+  would let the team make a *different policy choice*, it's a decision.
 
 Body sections, in this order:
 1. `# Headline claim` — one sentence; the nugget's thesis as a present-tense assertion
