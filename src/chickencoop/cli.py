@@ -25,6 +25,7 @@ def cmd_extract(args: argparse.Namespace) -> None:
         existing_ids=ids,
         endpoint=args.endpoint,
         model=args.model,
+        timeout=args.timeout,
         think_log=Path(args.think_log) if args.think_log else None,
     )
     if nugget is None:
@@ -48,6 +49,7 @@ def main() -> None:
     ex.add_argument("--endpoint", default="http://localhost:8000/v1/chat/completions")
     ex.add_argument("--model", default="deepseek-r1-distill-qwen-32b")
     ex.add_argument("--think-log", default=None, help="File to append <think> blocks for calibration")
+    ex.add_argument("--timeout", type=int, default=600, help="HTTP timeout in seconds (default 600)")
     ex.set_defaults(func=cmd_extract)
 
     ids_cmd = sub.add_parser("ids", help="List current nugget IDs in the corpus")

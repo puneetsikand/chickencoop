@@ -32,6 +32,7 @@ def extract_nugget(
     today: str | None = None,
     temperature: float = 0.2,
     max_tokens: int = 2048,
+    timeout: int = 600,
     think_log: Path | None = None,
 ) -> str | None:
     """
@@ -56,7 +57,7 @@ def extract_nugget(
         "max_tokens": max_tokens,
     }
 
-    resp = httpx.post(endpoint, json=payload, timeout=120)
+    resp = httpx.post(endpoint, json=payload, timeout=timeout)
     resp.raise_for_status()
     raw = resp.json()["choices"][0]["message"]["content"]
 
