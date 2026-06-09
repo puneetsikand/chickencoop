@@ -14,6 +14,7 @@ from pathlib import Path
 
 from chickencoop.corpus.loader import current_ids
 from chickencoop.extraction.runner import extract_nugget
+from chickencoop.eval.harness import run_eval
 
 
 def cmd_extract(args: argparse.Namespace) -> None:
@@ -38,6 +39,18 @@ def cmd_ids(args: argparse.Namespace) -> None:
         print(nid)
 
 
+def cmd_eval(args: argparse.Namespace) -> None:
+    run_eval(
+        corpus_dir=Path(args.corpus),
+        mode=args.mode,
+        limit=args.limit,
+        endpoint=args.endpoint,
+        model=args.model,
+        timeout=args.timeout,
+        out_path=Path(args.out) if args.out else None,
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(prog="chickencoop")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -55,6 +68,17 @@ def main() -> None:
     ids_cmd = sub.add_parser("ids", help="List current nugget IDs in the corpus")
     ids_cmd.add_argument("--corpus", required=True, help="Path to the nuggets directory")
     ids_cmd.set_defaults(func=cmd_ids)
+
+    ev = sub.add_parser("eval", help="Run extraction eval against the corpus")
+    ev.add_argument("--corpus", required=True, help="Path to the nuggets directory")
+    ev.add_argument("--mode", default="self", choices=["self"],
+                    help="self: strip each nugget's headline and ask model to reconstruct")
+    ev.add_argument("--limit", type=int, default=None, help="Stop after N nuggets")
+    ev.add_argument("--endpoint", default="http://localhost:8000/v1/chat/completions")
+    ev.add_argument("--model", default="deepseek-r1-distill-qwen-32b")
+    ev.add_argument("--timeout", type=int, default=600)
+    ev.add_argument("--out", default=None, help="JSON report output path")
+    ev.set_defaults(func=cmd_eval)
 
     args = parser.parse_args()
     args.func(args)
